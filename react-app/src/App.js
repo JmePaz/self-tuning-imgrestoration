@@ -12,8 +12,13 @@ function App() {
   //for UI
   const [visibLoading, updateVisibLoading] = useState(()=>{return "invisible"})
 
+  var loading = undefined;
   const applyFilterImg = () => {
-    const loading = document.getElementById("loading-img");
+    // if loading = undefined
+    if(loading === undefined){
+        loading = document.getElementById("loading-img");
+    }
+
     loading.style.visibility = "visible";
     //debug
     console.log('requesting Filter');
