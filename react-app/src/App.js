@@ -12,7 +12,7 @@ function App() {
    const applyFilterImg = () => {
     console.log('requesting Filter');
     //data required
-    const imgB64 = prevImg.replace('data:image\/jpeg;base64,', "")
+    const imgB64 = prevImg.replace(/^data:image\/\D+;base64,/gm, "");
     const primaryData = {'filterType': filterType, 'filterStrength': filterStrength, 'img':imgB64}
 
     //fetching
