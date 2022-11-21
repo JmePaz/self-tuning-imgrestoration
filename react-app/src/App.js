@@ -4,17 +4,24 @@ import React, { useState, useEffect } from 'react';
 
 function App() {
 
-  const [prevImg, updateImg] = useState(()=>{return logo;});
+  const [prevImg, updateImg] = useState(()=>{return "";});
   const [filterType, updateFilterType] = useState(()=>{return "default";})
   const [filterStrength, updateFilterStrength] = useState(()=>{ return 0;})
   const [data, setData] = useState(()=>{return [{}]});
 
+  //for UI
+  const [visibLoading, updateVisibLoading] = useState(()=>{return "invisible"})
+
   const applyFilterImg = () => {
+    const loading = document.getElementById("loading-img");
+    loading.style.visibility = "visible";
+    //debug
     console.log('requesting Filter');
+
     //data required
     const imgB64 = prevImg.replace(/^data:image\/\D+;base64,/gm, "");
     const primaryData = {'filterType': filterType, 'filterStrength': filterStrength, 'img':imgB64}
-
+    
     //fetching
     fetch("http://localhost:5000/filterRequest", {
        method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -36,10 +43,19 @@ function App() {
           updateImg("data:image/jpeg;base64,"+data["mod-img"])
        }
       }
+    ).then(
+      res =>{
+        loading.style.visibility = "hidden";
+      }
     )
+    
+    
   };
 
-  useEffect(()=>{applyFilterImg()}, [prevImg, filterType, filterStrength])
+  // useEffect(()=>{
+  //   applyFilterImg();
+  
+  // }, [])
 
   const displayHello = () => {
     alert('Filter Type: '+filterType +'-'+filterStrength)
@@ -84,9 +100,13 @@ function App() {
       <div className="w-full flex grow pt-20" >
         <div className="w-full flex justify-end mr-20">
           <div>
-            <input type="file" className="p-4 border bg-green-800 rounded text-white min-w-[6em] py-[6px]" accept=".jpg,.jpeg" onChange={getImgFile}/>
-            <div className="min-h-[25em] w-[27em] mt-5 bg-slate-200 rounded flex items-center ">
+            <input type="file" className= "p-4 border bg-green-800 rounded text-white min-w-[6em] py-[6px]" accept=".jpg,.jpeg" onChange={getImgFile}/>
+            <div className="min-h-[25em] w-[27em] mt-5 bg-slate-200 rounded flex items-center">
               <img id="prev-img" src={prevImg} width="95%" className="mx-auto"/>
+              <div id="loading-img" width="95%" height="100%" className="invisible fixed z-10 left-1/4 flex items-center mx-auto bg-slate-700 rounded p-3" >
+                <img src={logo} width="70px" height="70px" className="animate-spin" alt="loading screen"/>
+                <p className="text-white font-bold">Loading...</p>
+              </div>
             </div>
           </div>
         </div>
@@ -111,7 +131,7 @@ function App() {
               </div>
             </div>
             <div className="min-h-[10em] flex">
-              <button className="p-4 border bg-blue-900 rounded text-white self-end min-w-[8em] py-[8px]" onClick={displayHello}>Apply Filter</button>
+              <button className="p-4 border bg-blue-900 rounded text-white self-end min-w-[8em] py-[8px]" onClick={applyFilterImg}>Apply Filter</button>
             </div>
           </div>
         </div>
