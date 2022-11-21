@@ -20,7 +20,7 @@ def members():
 @cross_origin()
 def test():
     data = request.json
-    if(data['filterType'] == 'default'):
+    if(data['filterType'] == 'default' or data['filterStrength'] == 0):
         return jsonify({'status':False})
 
     img = imp.conv2Img(data['img'])

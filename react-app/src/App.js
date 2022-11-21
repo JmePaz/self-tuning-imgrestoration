@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 
 function App() {
 
-  const [prevImg, updateImg] = useState(()=>{return "";});
+  const [origImage, updateOrigImg] = useState(() => {return "";})
+  const [prevImg, updatePrevImg] = useState(()=>{return logo;});
   const [filterType, updateFilterType] = useState(()=>{return "default";})
   const [filterStrength, updateFilterStrength] = useState(()=>{ return 0;})
   const [data, setData] = useState(()=>{return [{}]});
@@ -18,15 +19,17 @@ function App() {
     if(loading === undefined){
         loading = document.getElementById("loading-img");
     }
-
     loading.style.visibility = "visible";
     //debug
     console.log('requesting Filter');
 
     //data required
-    const imgB64 = prevImg.replace(/^data:image\/\D+;base64,/gm, "");
+    const imgB64 = origImage.replace(/^data:image\/\D+;base64,/gm, "");
     const primaryData = {'filterType': filterType, 'filterStrength': filterStrength, 'img':imgB64}
-    
+    console.log('Sending data')
+    console.log(primaryData)
+
+
     //fetching
     fetch("http://localhost:5000/filterRequest", {
        method: 'POST', // *GET, POST, PUT, DELETE, etc.
@@ -42,11 +45,13 @@ function App() {
     ).then(
       data => {
         setData(data)
-        console.log(data['status'])
+        console.log('Has Processed: '+data['status'])
         if(data['status']==true){
-          console.log("Filtering Img")
-          updateImg("data:image/jpeg;base64,"+data["mod-img"])
-       }
+          updatePrevImg("data:image/jpeg;base64,"+data["mod-img"])
+        }
+        else if (data['status']==false){
+          updatePrevImg(origImage)
+        }
       }
     ).then(
       res =>{
@@ -71,7 +76,8 @@ function App() {
     fr.readAsDataURL(file);
 
     fr.onload = function () {
-      updateImg(fr.result);
+      updateOrigImg(fr.result);
+      updatePrevImg(fr.result);
     };
     fr.onerror = function (error) {
       console.log('Error: '+error);
@@ -128,7 +134,7 @@ function App() {
             </div>
             <div className="w-full mt-8">
               <p className="text-lg italic">Filter Strength:</p>
-              <input  id="filter-strength" type="range" min ="0" max="10" step="1" className="w-full" defaultValue={filterStrength} onMouseUp={e => updateFilterStrength(e.target.value)}></input>
+              <input  id="filter-strength" type="range" min ="0" max="10" step="1" className="w-full" defaultValue={filterStrength} onChange={e => updateFilterStrength(parseInt(e.target.value))}></input>
               <div className="w-full flex flex-row">
                 <p>0</p>
                 <p className="grow text-center">5</p>
