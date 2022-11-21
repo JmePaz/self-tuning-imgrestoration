@@ -9,7 +9,7 @@ function App() {
   const [filterStrength, updateFilterStrength] = useState(()=>{ return 0;})
   const [data, setData] = useState(()=>{return [{}]});
 
-   const applyFilterImg = () => {
+  const applyFilterImg = () => {
     console.log('requesting Filter');
     //data required
     const imgB64 = prevImg.replace(/^data:image\/\D+;base64,/gm, "");
@@ -37,7 +37,9 @@ function App() {
        }
       }
     )
-   };
+  };
+
+  useEffect(()=>{applyFilterImg()}, [prevImg, filterType, filterStrength])
 
   const displayHello = () => {
     alert('Filter Type: '+filterType +'-'+filterStrength)
@@ -101,7 +103,7 @@ function App() {
             </div>
             <div className="w-full mt-8">
               <p className="text-lg italic">Filter Strength:</p>
-              <input  id="filter-strength" type="range" min ="0" max="10" step="1" className="w-full" defaultValue={filterStrength} onChange={e => updateFilterStrength(e.target.value)}></input>
+              <input  id="filter-strength" type="range" min ="0" max="10" step="1" className="w-full" defaultValue={filterStrength} onMouseUp={e => updateFilterStrength(e.target.value)}></input>
               <div className="w-full flex flex-row">
                 <p>0</p>
                 <p className="grow text-center">5</p>
@@ -109,7 +111,7 @@ function App() {
               </div>
             </div>
             <div className="min-h-[10em] flex">
-              <button className="p-4 border bg-blue-900 rounded text-white self-end min-w-[8em] py-[8px]" onClick={applyFilterImg}>Apply Filter</button>
+              <button className="p-4 border bg-blue-900 rounded text-white self-end min-w-[8em] py-[8px]" onClick={displayHello}>Apply Filter</button>
             </div>
           </div>
         </div>
