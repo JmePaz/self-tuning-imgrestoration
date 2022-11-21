@@ -26,9 +26,6 @@ function App() {
     //data required
     const imgB64 = origImage.replace(/^data:image\/\D+;base64,/gm, "");
     const primaryData = {'filterType': filterType, 'filterStrength': filterStrength, 'img':imgB64}
-    console.log('Sending data')
-    console.log(primaryData)
-
 
     //fetching
     fetch("http://localhost:5000/filterRequest", {
@@ -130,6 +127,7 @@ function App() {
                 <option value="Sharpen">Sharpen</option>
                 <option value="GausBlur">Gaussian Blur</option>
                 <option value="BoxBlur">Box Blur</option>
+                <option value="Emboss">Emboss</option>
               </select>
             </div>
             <div className="w-full mt-8">
