@@ -16,7 +16,15 @@ function App() {
   const [visibLoading, updateVisibLoading] = useState(()=>{return "invisible"})
 
   var loading = undefined;
-  const SaveKernelonImg = (kernel, img) => {
+
+  const dowloadPrevImg = () => {
+    var a = document.createElement("a");
+    a.href = prevImg;
+    a.download = "FilteredImage.jpeg";
+    a.click();
+  }
+
+  const saveKernelonImg = (kernel, img) => {
     // from piexifjs
     var exif_dict = {
       "0th": {},
@@ -26,8 +34,10 @@ function App() {
       "1st": {},
       "thumbnail": null
     };
-
-    exif_dict["0th"][270] = kernel;
+    //add it as a user comment
+    exif_dict["Exif"][37510] = "Kernel used:\n"+kernel;
+    
+    //insert to the image
     const exif_bytes = piexif.dump(exif_dict);
     return piexif.insert(exif_bytes, img);
   }
@@ -61,16 +71,15 @@ function App() {
           setData(data)
 
           if(data['status']==true){
-            // the kernel used
-            console.log('Kernel Used:\n'+data['spec-kernel'])
+            // the kernel used 
+            console.log('Kernel Used:\n'+data['spec-kernel']) // [For debug]
 
             // save kernel
-            var newImg = SaveKernelonImg(data['spec-kernel'], "data:image/jpeg;base64,"+data["mod-img"])
+            var newImg = saveKernelonImg(data['spec-kernel'], "data:image/jpeg;base64,"+data["mod-img"])
 
             // this set to the preview image
             updatePrevImg(newImg)
 
-            //saving
           }
           else if (data['status']==false){
             updatePrevImg(origImage)
@@ -169,8 +178,11 @@ function App() {
               <img id="prev-img" src={prevImg} width="95%" className="mx-auto"/>
               <div id="loading-img" width="95%" height="100%" className="invisible fixed z-10 left-1/4 flex items-center mx-auto bg-slate-700 rounded p-3" >
                 <img src={logo} width="70px" height="70px" className="animate-spin" alt="loading screen"/>
-                <p className="text-white font-bold">Loading...</p>
+                <p className="text-white font-bold">Processing . . .</p>
               </div>
+            </div>
+            <div className="flex justify-end w-[27em] mt-3">
+              <button className="p-4 border bg-blue-900 rounded text-white self-end min-w-[8em] w- py-[8px]" onClick={dowloadPrevImg}> Download Img </button>
             </div>
           </div>
         </div>
