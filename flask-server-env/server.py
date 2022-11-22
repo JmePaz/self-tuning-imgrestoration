@@ -25,22 +25,24 @@ def filterRequest():
     if(data['filterType'] == 'default' or data['filterStrength'] == 0 or data['img']==""):
         return jsonify({'status':False})
 
+    #data vars
     filter_type = data['filterType']
     filter_strength = data['filterStrength']
 
     # img processing
-    img = imp.conv2Img(data['img'])
-    spec_k = imp.KERNELS[filter_type] * (filter_strength * 10)
-    img = imp.FilterImg.conv_filter(np.array(img), spec_k)
-    img = imp._asUInt8(img) 
-    img = imp.np2Img(img)
-    b64_img = imp.conv2B64(img)
-    return jsonify({'status': True, 'mod-img':b64_img})
+    spec_k = imp.KERNELS[filter_type] * (filter_strength)
+    filtered_b64Img = imp.applyFilter(data['img'], spec_k)
+    spec_k_enc = imp.kernel_tostr(spec_k)
+
+    #returning as json object
+    return jsonify({'status': True, 'mod-img': filtered_b64Img
+    ,'spec-kernel':spec_k_enc})
 
 #Image Grayscale API Route
 @app.route('/grayscaleRequest', methods=['GET', 'POST'])
 @cross_origin()
 def grayscaleRequest():
+    #data request
     data = request.json
     if(data['img']==""):
         return jsonify({'status':False})
@@ -48,7 +50,11 @@ def grayscaleRequest():
     # img processing
     img = imp.conv2Img(data['img'])
     b64_img = imp.conv2B64(img)
+
+    #returning as json object
     return jsonify({'status': True, 'mod-img':b64_img})
 
+
+#RUN APP
 if __name__ == '__main__':
     app.run(debug=True)

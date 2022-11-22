@@ -33,8 +33,16 @@ def clip_color(channel, vmin=0, vmax=255):
   return channel
 
 def _asUInt8(img):
-    img = np.floor(clip_color(img, 0, 1) * 255)
+    img = np.rint(clip_color(img, 0, 1) * 255)
     return img.astype(np.uint8)
+
+def kernel_tostr(kernel: np.ndarray):
+    lst = []
+    for x in kernel:
+      str_arr = np.array2string(x)
+      lst.append(str_arr[1:-1].strip())
+    return "\n".join(lst)
+
 
 """
    Convolutional Filter
@@ -82,3 +90,9 @@ class FilterImg:
     return exif.save_exifInfo(path, new_img, enc_kernel)
 
 
+#===============Sequence Function ===========
+def applyFilter(imgB64, spec_k):
+    img = conv2Img(imgB64)
+    img = FilterImg.conv_filter(np.array(img)/1.0, spec_k)
+    img = Image.fromarray(_asUInt8(img))
+    return conv2B64(img)

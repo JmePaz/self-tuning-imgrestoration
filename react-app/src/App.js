@@ -20,8 +20,6 @@ function App() {
         loading = document.getElementById("loading-img");
     }
     loading.style.visibility = "visible";
-    //debug
-    console.log('requesting Filter');
 
     //data required
     const imgB64 = origImage.replace(/^data:image\/\D+;base64,/gm, "");
@@ -42,8 +40,9 @@ function App() {
     ).then(
       data => {
         setData(data)
-        console.log('Has Processed: '+data['status'])
+
         if(data['status']==true){
+          console.log('Kernel Used:\n'+data['spec-kernel'])
           updatePrevImg("data:image/jpeg;base64,"+data["mod-img"])
         }
         else if (data['status']==false){
