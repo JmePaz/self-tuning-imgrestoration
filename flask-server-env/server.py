@@ -22,7 +22,7 @@ def members():
 def filterRequest():
     #fetching data
     data = request.json
-    if(data['filterType'] == 'default' or data['filterStrength'] == 0):
+    if(data['filterType'] == 'default' or data['filterStrength'] == 0 or data['img']==""):
         return jsonify({'status':False})
 
     filter_type = data['filterType']
@@ -34,6 +34,19 @@ def filterRequest():
     img = imp.FilterImg.conv_filter(np.array(img), spec_k)
     img = imp._asUInt8(img) 
     img = imp.np2Img(img)
+    b64_img = imp.conv2B64(img)
+    return jsonify({'status': True, 'mod-img':b64_img})
+
+#Image Grayscale API Route
+@app.route('/grayscaleRequest', methods=['GET', 'POST'])
+@cross_origin()
+def grayscaleRequest():
+    data = request.json
+    if(data['img']==""):
+        return jsonify({'status':False})
+    
+    # img processing
+    img = imp.conv2Img(data['img'])
     b64_img = imp.conv2B64(img)
     return jsonify({'status': True, 'mod-img':b64_img})
 

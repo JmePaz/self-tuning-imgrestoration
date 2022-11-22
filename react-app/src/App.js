@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 function App() {
 
   const [origImage, updateOrigImg] = useState(() => {return "";})
-  const [prevImg, updatePrevImg] = useState(()=>{return logo;});
+  const [prevImg, updatePrevImg] = useState(()=>{return "";});
   const [filterType, updateFilterType] = useState(()=>{return "default";})
   const [filterStrength, updateFilterStrength] = useState(()=>{ return 0;})
   const [data, setData] = useState(()=>{return [{}]});
@@ -59,10 +59,35 @@ function App() {
     
   };
 
-  // useEffect(()=>{
-  //   applyFilterImg();
-  
-  // }, [])
+  const applyGrayscale = (currImg) => {
+    // if loading = undefined
+    if(loading === undefined){
+      loading = document.getElementById("loading-img");
+    }
+    loading.style.visibility = "visible";
+    
+    const imgB64 = currImg.replace(/^data:image\/\D+;base64,/gm, "");
+    const primaryData = {'img': imgB64};
+
+    fetch("http://localhost:5000/grayscaleRequest", {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      mode: 'cors', // no-cors, *cors, same-origin
+      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+      headers: {
+        'Content-Type': 'application/json'
+      },
+       body: JSON.stringify(primaryData) // body data type must match "Content-Type" header
+   }).then(res => res.json())
+   .then(
+    data =>{
+      setData(data)
+      if(data['status'] == true){
+        updateOrigImg("data:image/jpeg;base64,"+data["mod-img"]);
+        updatePrevImg("data:image/jpeg;base64,"+data["mod-img"])
+      }
+    }
+   ).then(res => {loading.style.visibility="hidden"})
+  };
 
   const displayHello = () => {
     alert('Filter Type: '+filterType +'-'+filterStrength)
@@ -73,8 +98,10 @@ function App() {
     fr.readAsDataURL(file);
 
     fr.onload = function () {
-      updateOrigImg(fr.result);
-      updatePrevImg(fr.result);
+      const imgB64 = fr.result;
+      applyGrayscale(imgB64);
+      //updateOrigImg(fr.result);
+      //updatePrevImg(fr.result);
     };
     fr.onerror = function (error) {
       console.log('Error: '+error);
@@ -109,6 +136,7 @@ function App() {
         <div className="w-full flex justify-end mr-20">
           <div>
             <input type="file" className= "p-4 border bg-green-800 rounded text-white min-w-[6em] py-[6px]" accept=".jpg,.jpeg" onChange={getImgFile}/>
+            <p>Note: Images upload will automatically turn into a grayscale image.</p>
             <div className="min-h-[25em] w-[27em] mt-5 bg-slate-200 rounded flex items-center">
               <img id="prev-img" src={prevImg} width="95%" className="mx-auto"/>
               <div id="loading-img" width="95%" height="100%" className="invisible fixed z-10 left-1/4 flex items-center mx-auto bg-slate-700 rounded p-3" >
@@ -128,6 +156,7 @@ function App() {
                 <option value="GausBlur">Gaussian Blur</option>
                 <option value="BoxBlur">Box Blur</option>
                 <option value="Emboss">Emboss</option>
+                <option value="SampleBlur">Sample Blur</option>
               </select>
             </div>
             <div className="w-full mt-8">
