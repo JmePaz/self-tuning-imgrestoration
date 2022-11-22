@@ -1,6 +1,8 @@
 import logo from './logo.svg';
 import './App.css';
 import React, { useState, useEffect } from 'react';
+import piexif from '../node_modules/piexifjs/piexif.js';
+//require('../node_modules/piexifjs/piexif.js')
 
 function App() {
 
@@ -14,6 +16,23 @@ function App() {
   const [visibLoading, updateVisibLoading] = useState(()=>{return "invisible"})
 
   var loading = undefined;
+  const SaveKernelonImg = (kernel, img) => {
+    // from piexifjs
+    var exif_dict = {
+      "0th": {},
+      "Exif": {},
+      "GPS": {},
+      "Interop": {},
+      "1st": {},
+      "thumbnail": null
+    };
+
+    exif_dict["0th"][270] = kernel;
+    const exif_bytes = piexif.dump(exif_dict);
+    return piexif.insert(exif_bytes, img);
+  }
+
+
   const applyFilterImg = () => {
     // if loading = undefined
     if(loading === undefined){
@@ -27,32 +46,40 @@ function App() {
 
     //fetching
     fetch("http://localhost:5000/filterRequest", {
-       method: 'POST', // *GET, POST, PUT, DELETE, etc.
-       mode: 'cors', // no-cors, *cors, same-origin
-       cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-       headers: {
-         'Content-Type': 'application/json'
-       },
-        body: JSON.stringify(primaryData) // body data type must match "Content-Type" header
-    })
-    .then(
-      res => res.json()
-    ).then(
-      data => {
-        setData(data)
+        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        mode: 'cors', // no-cors, *cors, same-origin
+        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+        headers: {
+          'Content-Type': 'application/json'
+        },
+          body: JSON.stringify(primaryData) // body data type must match "Content-Type" header
+      })
+      .then(
+        res => res.json()
+      ).then(
+        data => {
+          setData(data)
 
-        if(data['status']==true){
-          console.log('Kernel Used:\n'+data['spec-kernel'])
-          updatePrevImg("data:image/jpeg;base64,"+data["mod-img"])
+          if(data['status']==true){
+            // the kernel used
+            console.log('Kernel Used:\n'+data['spec-kernel'])
+
+            // save kernel
+            var newImg = SaveKernelonImg(data['spec-kernel'], "data:image/jpeg;base64,"+data["mod-img"])
+
+            // this set to the preview image
+            updatePrevImg(newImg)
+
+            //saving
+          }
+          else if (data['status']==false){
+            updatePrevImg(origImage)
+          }
         }
-        else if (data['status']==false){
-          updatePrevImg(origImage)
+      ).then(
+        res =>{
+          loading.style.visibility = "hidden";
         }
-      }
-    ).then(
-      res =>{
-        loading.style.visibility = "hidden";
-      }
     )
     
     
@@ -123,6 +150,8 @@ function App() {
     updateFilterType(prev => e.target.value)
     console.log('Filter Type ', filterType);
   }
+
+
 
   return (
     <div className="w-full h-screen flex flex-col">
