@@ -7,8 +7,6 @@ import matplotlib.pyplot as plt
 import piexif as p
 
 #from skimage import color
-
-
 def conv2Img(base64_enc: str):
     base64_dec = base64.b64decode(base64_enc)
     buf = io.BytesIO(base64_dec)
@@ -72,7 +70,7 @@ KERNELS['Emboss'] = np.asarray([
 
 KERNELS['SampleBlur'] = np.ones((5, 5))/25
 
-#=========/KERNEL=============
+#=========</KERNEL>=============
 
 
 from scipy import signal
@@ -96,3 +94,4 @@ def applyFilter(imgB64, spec_k):
     img = FilterImg.conv_filter(np.array(img)/1.0, spec_k)
     img = Image.fromarray(_asUInt8(img))
     return conv2B64(img)
+#=============================================
