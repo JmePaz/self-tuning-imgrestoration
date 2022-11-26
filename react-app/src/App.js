@@ -23,7 +23,7 @@ function App() {
             </Routes>
         </div>
         <div className="bg-slate-800 text-white text-center py-2 mt-3">
-          <p className="italic">Pzzy-Lab Exp #0003</p>
+          <p className="italic">Pzzy-Lab-Experiment-#0003</p>
         </div>
       </div>
     </Router>
