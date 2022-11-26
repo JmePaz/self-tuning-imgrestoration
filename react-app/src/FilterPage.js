@@ -189,7 +189,6 @@ function FilterPage() {
                   <option value="Sharpen">Sharpen</option>
                   <option value="GausBlur">Gaussian Blur</option>
                   <option value="BoxBlur">Box Blur</option>
-                  <option value="Emboss">Emboss</option>
                   <option value="SampleBlur">Sample Blur</option>
                 </select>
               </div>

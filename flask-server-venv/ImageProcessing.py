@@ -89,11 +89,7 @@ KERNELS['GausBlur'] = np.asarray([
     [2, 4, 2],
     [1, 2, 1]
 ])*(1/16)
-KERNELS['Emboss'] = np.asarray([
-     [-1, 0, 0],
-     [0, 0, 0],
-    [0, 0, 1]
-    ])
+
 
 KERNELS['SampleBlur'] = np.ones((5, 5))/25
 
