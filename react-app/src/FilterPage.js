@@ -35,7 +35,7 @@ function FilterPage() {
         "thumbnail": null
       };
       //add it as a user comment
-      exif_dict["Exif"][37510] = "Kernel used:\n"+kernel;
+      exif_dict["Exif"][37510] = filterType+"@\n"+kernel;
       
       //insert to the image
       const exif_bytes = piexif.dump(exif_dict);
@@ -159,6 +159,8 @@ function FilterPage() {
       updateFilterType(prev => e.target.value)
       console.log('Filter Type ', filterType);
     }
+
+
   
     return (
         <div className="w-full flex grow pt-6" >
@@ -187,7 +189,6 @@ function FilterPage() {
                   <option value="Sharpen">Sharpen</option>
                   <option value="GausBlur">Gaussian Blur</option>
                   <option value="BoxBlur">Box Blur</option>
-                  <option value="Emboss">Emboss</option>
                   <option value="SampleBlur">Sample Blur</option>
                 </select>
               </div>
