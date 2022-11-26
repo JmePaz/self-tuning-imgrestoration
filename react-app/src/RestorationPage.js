@@ -6,10 +6,17 @@ function RestorationPage() {
   const [prevImg, updatePrevImg] = useState(()=>{return logo;});
   const [restoredImg, updateRestImg] = useState(()=>{})
   const [filterType, updateFilterType] = useState(()=>{return "";});
-  const [kernel, updateKernel] = useState(()=>{return "";})
+  const [kernel, updateKernel] = useState(()=>{return undefined;});
   
   var loading = undefined;
-  var kernelInLoad = undefined;
+  const FILTER_TYPE = {
+    "Sharpen": "Sharpen",
+    "GausBlur": "Gaussian Blur",
+    "BoxBlur": "Box Blur",
+    "Emboss": "Emboss",
+    "SampleBlur": "Sample Blur"
+  }
+
   function setBase64Img(file){
     var fr = new FileReader();
     fr.readAsDataURL(file);
@@ -40,17 +47,28 @@ function RestorationPage() {
       var exifObj = piexif.load(imgB64);
       if('Exif' in exifObj && 37510 in exifObj['Exif']){
         var data = exifObj['Exif'][37510].split(/@\r?\n/gm);
-        kernelInLoad = data[1];
-        updateFilterType(data[0])
-        updateKernel(data[1])
-        return data
+        var filter_type = data[0];
+        if(filter_type in FILTER_TYPE){
+          filter_type = FILTER_TYPE[filter_type];
+        }
+        else{
+          filter_type = 'undetected';
+        }
+        
+        updateFilterType(filter_type)
+        updateKernel(data[1].split(/\r?\n/gm))
+        return data[1];
       }
       else{
+        updateFilterType('undetected')
         console.log('Not Detected')
+        return false;
       }
     }
     catch(err){
       console.log('Error')
+      updateFilterType('undetected')
+      return false;
     }
 
   }
@@ -70,8 +88,14 @@ function RestorationPage() {
        //data required
        const imgB64 = prevImg.replace(/^data:image\/\D+;base64,/gm, "");
        const exifData = getImgExifData(prevImg);
-       const primaryData = {'img':imgB64, 'kernel': exifData[1]}
+       if(exifData === false){
+        loading.style.visibility = "hidden";
+        alert("Kernel Undetected")
+        return;
+       }
+       const primaryData = {'img':imgB64, 'kernel': exifData}
     //     //fetching
+    try{
       fetch("http://localhost:5000/restorationRequest", {
         method: 'POST', // *GET, POST, PUT, DELETE, etc.
         mode: 'cors', // no-cors, *cors, same-origin
@@ -87,14 +111,6 @@ function RestorationPage() {
         data => {
 
           if(data['status']==true){
-            // // the kernel used 
-            // //console.log('Kernel Used:\n'+data['spec-kernel']) // [For debug]
-
-            // // save kernel
-            // var newImg = saveKernelonImg(data['spec-kernel'], "data:image/jpeg;base64,"+data["mod-img"])
-
-            // // this set to the preview image
-            // updatePrevImg(newImg)
             updateRestImg("data:image/jpeg;base64,"+data['restored-img'])
           }
           else{
@@ -106,9 +122,43 @@ function RestorationPage() {
         res =>{
           loading.style.visibility = "hidden";
         }
+      )
+    }
+    catch(err) {
+      alert("Error in server fetching");
+      loading.style.visibility = "hidden";
+    }
+  }
+
+  const DisplayKernel = () => {
+    if(kernel=="" || kernel==undefined){
+      return (<div className="px-2"><p>None</p></div>);
+    }
+    const kernelP1 = kernel.map( (k, i) => k.split(/[ ]+/gm))
+    console.log(kernelP1)
+    return (
+        <table className="border-separate border-spacing-x-7 text-lg">
+          {kernelP1.map((row, i)=> <tr>{ (row.map((cell, i)=> <td className="border text-center">{cell}</td>))}</tr>)
+          }
+        </table>
     )
   }
+
+  const dowloadRestoredImg = () => {
+    if(prevImg==logo || prevImg==""){
+      alert("Please wait/insert an image first")
+      return;
+    }
+    var dl = document.createElement("a");
+    dl.href = restoredImg;
+    dl.download = "RestoredImage.jpeg";
+    dl.click();
+  }
+
   return (
+    // <>
+      // {addKernel()}
+    // </>
     <div className="flex w-[95%] h-full mx-auto mt-5">
       <div className="w-1/2 flex flex-col items-center">
         <div>
@@ -135,11 +185,34 @@ function RestorationPage() {
             </div>
             <img id="restored-img" src={restoredImg} width="95%" className="mx-auto h-full w-auto"/>
           </div>
-          <div className="w-full my-4">
-            <button className="p-4 border bg-green-700 rounded text-white py-[8px]"> Download Restored Img </button>
-            <p><span className="font-bold">Detected Filter Type:</span> {filterType}</p>
-            <p className="font-bold">Detected Kernel Used:</p>
-            <p>{kernel}</p>
+          <div className="w-full mb-4 mt-2">
+            <button className="p-4 border bg-green-700 rounded text-white py-[8px]" onClick={dowloadRestoredImg}> Download Restored Img </button>
+            <p className = "mt-4"><span className="font-bold">Detected Filter Type: </span><span className="text-lg">{filterType}</span></p>
+            <div className="flex mt-1">
+              <p className="font-bold">Detected Kernel Used:</p>
+              <div className="ml-3 mt-3 w-fit bg-slate-200 border-x-4 border-sky-500">
+                <div className="flex">
+                  <div className="w-[20%] h-4 border-t-4 border-sky-500">
+                  </div>
+                  <div className="grow">
+                  </div>
+                  <div className="w-[20%] h-4 border-t-4 border-sky-500">
+                  </div>
+                </div>
+                {/* <p>{kernel}</p> */}
+                <div className="">
+                  {DisplayKernel()}
+                </div>
+                <div className="flex">
+                  <div className="w-[20%] h-4 border-b-4 border-sky-500">
+                  </div>
+                  <div className="grow">
+                  </div>
+                  <div className="w-[20%] h-4 border-b-4 border-sky-500">
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -22,8 +22,8 @@ function App() {
               <Route exact path='/restore' element={<RestorationPage/>}/>
             </Routes>
         </div>
-        <div className="bg-slate-800 text-white text-center pt-2 mt-3">
-          <p>Pzzy-Lab Exp #0003</p>
+        <div className="bg-slate-800 text-white text-center py-2 mt-3">
+          <p className="italic">Pzzy-Lab Exp #0003</p>
         </div>
       </div>
     </Router>
