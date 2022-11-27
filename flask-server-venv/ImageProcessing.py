@@ -6,13 +6,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 import piexif as p
 import sys
+from skimage.color import rgb2gray
 
-from skimage import color
 def conv2Img(base64_enc: str):
     base64_dec = base64.b64decode(base64_enc)
     buf = io.BytesIO(base64_dec)
-    img = Image.open(buf).convert('L')
+    img = Image.open(buf)
     return img
+
+def PIL_gray(img:Image):
+    return img.convert('L')
+
+def Sk_gray(img:np.ndarray):
+    return rgb2gray(img)
 
 def np2Img(img_array):
     return Image.fromarray(img_array)
@@ -110,7 +116,8 @@ class FilterImg:
     exif = ExifImg()
     return exif.save_exifInfo(path, new_img, enc_kernel)
 
-
+from skimage import img_as_float
+from skimage import restoration
 #===============Sequence Function ===========
 def applyFilter(imgB64, spec_k):
     img = conv2Img(imgB64)
@@ -118,8 +125,10 @@ def applyFilter(imgB64, spec_k):
     img = Image.fromarray(_asUInt8(img))
     return conv2B64(img)
 
-from skimage import img_as_float
-from skimage import restoration
+def applyGrayscale(img):
+    img = rgb2gray((np.asarray(img)))
+    return Image.fromarray(_asUInt8(img))
+
 rng = np.random.default_rng()
 
 def restore_img(img, spec_kernel):
@@ -132,7 +141,6 @@ def image_restoration(img, spec_kernel):
     img = clip_color(img, 0, 1)
     img = img_as_float(img)
     restored = restore_img(img, spec_kernel) 
-    restored = clip_color(restored, 0, 1)
     restored_img = Image.fromarray(_asUInt8(restored)) 
     return restored_img
 #=============================================
