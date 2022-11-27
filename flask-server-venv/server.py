@@ -48,11 +48,12 @@ def grayscaleRequest():
         return jsonify({'status':False})
     
     # img processing
-    img = imp.conv2Img(data['img'])
-    b64_img = imp.conv2B64(img)
+    B64_img = imp.conv2Img(data['img'])
+    gray_img = imp.applyGrayscale(B64_img)
+    B64_img = imp.conv2B64(gray_img)
 
     #returning as json object
-    return jsonify({'status': True, 'mod-img':b64_img})
+    return jsonify({'status': True, 'mod-img':B64_img})
 
 
 #Image Restoration API Route
@@ -66,7 +67,7 @@ def restorationRequest():
 
      # img processing
     try:
-        img = imp.conv2Img(data['img'])
+        img = imp.conv2Img(data['img']).convert('L')
     except Exception as e:
         return jsonify({'status':False, 'remarks':'Image encoded error'})
 

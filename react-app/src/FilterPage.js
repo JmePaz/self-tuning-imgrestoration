@@ -168,15 +168,17 @@ function FilterPage() {
             <div className = "flex flex-col justify-start">
               <input type="file" className= "p-4 border bg-green-800 rounded text-white w-[20em] py-[6px]" accept=".jpg,.jpeg" onChange={getImgFile}/>
               <p>Note: Images upload will automatically turn into a grayscale image.</p>
-              <div className="min-h-[25em] w-[27em] mt-5 bg-slate-200 rounded flex items-center">
-                <img id="prev-img" src={prevImg} width="95%" className="mx-auto"/>
-                <div id="loading-img" width="95%" height="100%" className="invisible fixed z-10 left-[22%] flex items-center mx-auto bg-slate-700 rounded p-3" >
-                  <img src={logo} width="70px" height="70px" className="animate-spin" alt="loading screen"/>
-                  <p className="text-white font-bold">Processing...</p>
+              <div className=" w-[35em]">
+                <div className="h-[25em] w-full mt-5 bg-slate-200 rounded flex flex-col items-center">
+                  <div id="loading-img" width="95%" height="100%" className="invisible absolute z-10 top-[55%]  flex items-center mx-auto bg-slate-700/80 rounded px-5 py-3" >
+                    <img src={logo} width="70px" height="70px" className="animate-spin" alt="loading screen"/>
+                    <p className="text-white font-bold">Processing...</p>
+                  </div>
+                  <img id="preview-img" src={prevImg} width="95%" className="mx-auto h-full w-auto"/>
                 </div>
-              </div>
-              <div className="flex justify-end w-[27em] mt-4">
-                <button className="p-4 border bg-blue-900 rounded text-white self-end min-w-[8em] py-[8px]" onClick={dowloadPrevImg}> Download Img </button>
+                <div className="flex justify-end w-full mt-4">
+                  <button className="p-4 border bg-blue-900 rounded text-white self-end min-w-[8em] py-[8px]" onClick={dowloadPrevImg}> Download Img </button>
+                </div>
               </div>
             </div>
           </div>
