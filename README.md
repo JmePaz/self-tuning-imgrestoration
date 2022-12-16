@@ -24,3 +24,5 @@ This a Self-Tuning Image Restoration.
 5.) save the restored Image
 ![image](https://user-images.githubusercontent.com/105730089/208055707-89e8bb73-0396-4bb4-a9bb-5600fe0df778.png)
 
+Comparison
+![image](https://user-images.githubusercontent.com/105730089/208057455-a63170bb-ea02-47aa-8d4c-3bd40f8edb94.png)
