@@ -7,6 +7,11 @@ This a Self-Tuning Image Restoration.
 - Created a Web interface React (Front End) and  Python Flask (Back End)
   - Filter Page 
   - Restoration Page
+  
+# Dependencies
+1.) Python handles the image processing part of this system. Dependencies includes below:</br>
+ ``PIL, Matplotlib, Numpy, Scipy, Scikit-learn``</br></br>
+2.) React framework also need dependencies on the front end.</br> ``Piexif-JS, Router-Dom``
 
 # Instruction
 1.) Upload an Image
