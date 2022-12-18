@@ -4,7 +4,7 @@ This a Self-Tuning Image Restoration.
 - Extraction of Kernel used in JPEG file
 - Use this as a parameters in a unsupervised wiener algorithm
 - Only works for grayscale images (for now)
-- Created a Web interface (React Front End) and  (Python Back End)
+- Created a Web interface (React Front End) and  Flask (Python Back End)
   - Filter Page 
   - Restoration Page
 
@@ -25,3 +25,6 @@ This a Self-Tuning Image Restoration.
 
 Comparison
 ![image](https://user-images.githubusercontent.com/105730089/208057455-a63170bb-ea02-47aa-8d4c-3bd40f8edb94.png)
+
+#Acknowledgement
+Thanks to my Senior Job Lipat for introducing and helping me with React Framework
