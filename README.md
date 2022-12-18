@@ -1,8 +1,8 @@
 # Self-tuning-imgrestoration
 This a Self-Tuning Image Restoration.
 
-- Extraction of Kernel used in JPEG file
-- Use this as a parameters in a unsupervised wiener algorithm
+- Extraction of Kernel/PSF used in a JPEG file
+- Then use the extracted info as a parameters in a unsupervised wiener algorithm for restoration
 - Only works for grayscale images (for now)
 - Created a Web interface React (Front End) and  Python Flask (Back End)
   - Filter Page 
