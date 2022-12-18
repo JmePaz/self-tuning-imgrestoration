@@ -48,8 +48,8 @@ def grayscaleRequest():
         return jsonify({'status':False})
     
     # img processing
-    B64_img = imp.conv2Img(data['img'])
-    gray_img = imp.applyGrayscale(B64_img)
+    img = imp.conv2Img(data['img'])
+    gray_img = img.convert('L')
     B64_img = imp.conv2B64(gray_img)
 
     #returning as json object
