@@ -26,5 +26,5 @@ This a Self-Tuning Image Restoration.
 Comparison
 ![image](https://user-images.githubusercontent.com/105730089/208057455-a63170bb-ea02-47aa-8d4c-3bd40f8edb94.png)
 
-#Acknowledgement
+# Acknowledgement
 Thanks to my Senior Job Lipat for introducing and helping me with React Framework
